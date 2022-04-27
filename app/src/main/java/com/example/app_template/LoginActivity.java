@@ -11,6 +11,7 @@ import java.net.InetSocketAddress;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private Button btnLogin;
     private Button btnSignUp;
 
     @Override
@@ -19,6 +20,13 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         initComponents();
+
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            }
+        });
 
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -30,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void initComponents(){
+        btnLogin = (Button) findViewById(R.id.buttonLogin);
         btnSignUp = (Button) findViewById(R.id.buttonSignUp);
     }
 
