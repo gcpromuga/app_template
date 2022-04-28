@@ -10,13 +10,13 @@ import android.view.MenuItem;
 import android.widget.FrameLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.android.material.navigation.NavigationView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity {
 
-    private MaterialToolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    private BottomNavigationView bottomNav;
     private FrameLayout frameLayout;
 
     @Override
@@ -26,21 +26,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         initComponents();
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                    new HomeFragment()).commit();
+        }
+
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                                new HomeFragment()).commit();
+                        break;
+                    case R.id.nav_profile:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                                new ProfileFragment()).commit();
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void initComponents(){
-        toolbar = findViewById(R.id.toolbar);
+        bottomNav = findViewById(R.id.main_bottom_navigation);
         frameLayout = findViewById(R.id.main_framelayout);
-        drawerLayout = findViewById(R.id.drawerLayout);
-        navigationView = findViewById(R.id.navigation);
-        navigationView.setNavigationItemSelectedListener(MainActivity.this);
     }
 
-    @Override
-    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        return false;
-    }
 }
