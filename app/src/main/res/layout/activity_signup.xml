@@ -17,28 +17,40 @@
         android:orientation="vertical">
 
         <EditText
+            android:id="@+id/editTextFname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="first name" />
 
         <EditText
+            android:id="@+id/editTextLname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="last name" />
 
         <EditText
+            android:id="@+id/editTextEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="email"
+            android:inputType="textEmailAddress"/>
+
+        <EditText
+            android:id="@+id/editTextPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
             android:inputType="textPassword"/>
 
         <EditText
+            android:id="@+id/editTextCPassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="confirm password"
             android:inputType="textPassword"/>
 
         <Button
+            android:id="@+id/buttonRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Register"/>
