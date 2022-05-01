@@ -7,6 +7,12 @@
     tools:context=".MainActivity">
 
 
+    <Button
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Logout"/>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -18,5 +24,6 @@
         android:layout_alignParentBottom="true"
         app:menu="@menu/bottom_navigation_menu"
         android:id="@+id/main_bottom_navigation"/>
+
 
 </RelativeLayout>
