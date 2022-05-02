@@ -37,17 +37,15 @@ public class MainActivity extends AppCompatActivity {
 
         initComponents();
 
-        if (!isAuthenticated()){
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
+        checkLoggedIn();
 
-//        mLogout.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                mAuth.signOut();
-//                //startActivity(new Intent(MainActivity.this, LoginActivity.class));
-//            }
-//        });
+        mLogout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mAuth.signOut();
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            }
+        });
 
     }
 
@@ -61,26 +59,24 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private boolean isAuthenticated() {
+    private void checkLoggedIn() {
         FirebaseUser user = mAuth.getCurrentUser();
-//        return true;
-        if (user != null) {
-            if (user.isEmailVerified()) {
-                // do nothing
-                return true;
-            }
-            else{
-                mAuth.signOut();
-                Toast.makeText(getApplicationContext(), "Please verify your account!", Toast.LENGTH_LONG).show();
-                return false;
-                //startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            }
-        }
-        else {
-            //startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            return false;
-        }
 
+        if (mAuth.getCurrentUser() != null){
+            if (user != null) {
+                if (user.isEmailVerified()) {
+//                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+                else{
+                    mAuth.signOut();
+                    Toast.makeText(getApplicationContext(), "Please verify your account!", Toast.LENGTH_LONG).show();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                }
+            }
+        }
+        else{
+            startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
     }
 
 }
