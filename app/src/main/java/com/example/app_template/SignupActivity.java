@@ -31,8 +31,7 @@ public class SignupActivity extends AppCompatActivity {
     private Toolbar mToolbar;
     private ImageView mBack;
 
-    private EditText mFName;
-    private EditText mLName;
+    private EditText mName;
     private EditText mEmail;
     private EditText mPassword;
     private EditText mCPassword;
@@ -76,8 +75,7 @@ public class SignupActivity extends AppCompatActivity {
         mToolbar = (Toolbar) findViewById(R.id.toolBarSignUp);
         mBack = (ImageView) findViewById(R.id.imgBack);
 
-        mFName = (EditText) findViewById(R.id.editTextFname);
-        mLName = (EditText) findViewById(R.id.editTextLname);
+        mName = (EditText) findViewById(R.id.editTextName);
         mEmail = (EditText) findViewById(R.id.editTextEmail);
         mPassword = (EditText) findViewById(R.id.editTextPassword);
         mCPassword = (EditText) findViewById(R.id.editTextCPassword);
@@ -94,19 +92,13 @@ public class SignupActivity extends AppCompatActivity {
         mProgress.setCancelable(false);
         mProgress.show();
 
-        String fName = mFName.getText().toString().trim();
-        String lName = mLName.getText().toString().trim();
+        String fName = mName.getText().toString().trim();
         String email = mEmail.getText().toString().trim();
         String password = mPassword.getText().toString().trim();
         String cPassword = mCPassword.getText().toString().trim();
 
         if (TextUtils.isEmpty(fName)){
-            mFName.setError("Required field!");
-            mProgress.dismiss();
-            return;
-        }
-        if (TextUtils.isEmpty(lName)){
-            mLName.setError("Required field!");
+            mName.setError("Required field!");
             mProgress.dismiss();
             return;
         }
@@ -151,8 +143,7 @@ public class SignupActivity extends AppCompatActivity {
                     //instance of an object
                     final UserDetail userDetail = new UserDetail();
                     userDetail.setUid(uid);
-                    userDetail.setfName(fName);
-                    userDetail.setlName(lName);
+                    userDetail.setName(fName);
                     userDetail.setEmail(email.toLowerCase());
 
                     user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -174,7 +165,6 @@ public class SignupActivity extends AppCompatActivity {
                 }
             }
         });
-
 
     }
 

@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.app_template.object.UserDetail;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -48,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
 
     private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
 
     private ProgressDialog mProgress;
 
@@ -87,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
         mGoogleSign = findViewById(R.id.sign_in_button);
         mGoogleSign.setSize(SignInButton.SIZE_STANDARD);
 
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
 
         mProgress = new ProgressDialog(this);
@@ -183,7 +186,7 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             mProgress.dismiss();
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                            createProfile(user);
                         } else {
                             // If sign in fails, display a message to the user.
                             mProgress.dismiss();
@@ -194,4 +197,26 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
+    private void createProfile(FirebaseUser user){
+        DatabaseReference profileRef = mDatabase.child("userProfile").child(user.getUid());
+
+        UserDetail userDetail = new UserDetail();
+        userDetail.setUid(user.getUid());
+        userDetail.setName(user.getDisplayName());
+        userDetail.setEmail(user.getEmail());
+
+        Toast.makeText(getApplicationContext(), user.getUid(), Toast.LENGTH_SHORT).show();
+
+        profileRef.setValue(userDetail).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), task.getException().getMessage().toString(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
 }

@@ -17,16 +17,10 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/editTextFname"
+            android:id="@+id/editTextName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="first name" />
-
-        <EditText
-            android:id="@+id/editTextLname"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="last name" />
+            android:hint="full name" />
 
         <EditText
             android:id="@+id/editTextEmail"
