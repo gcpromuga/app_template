@@ -95,4 +95,12 @@ public class HomeFragment extends Fragment implements LocationListener {
             Toast.makeText(getActivity(), "null location", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Toast.makeText(getContext(), "On Pause", Toast.LENGTH_SHORT).show();
+        mLocationManager.removeUpdates(this);
+    }
+
 }
