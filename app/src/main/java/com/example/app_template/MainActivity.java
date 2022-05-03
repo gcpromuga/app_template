@@ -2,10 +2,15 @@ package com.example.app_template;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +19,8 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
@@ -30,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
 
     private Button mLogout;
 
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         initComponents();
 
         checkLoggedIn();
+
+        checkLocationPermission();
 
         mLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +110,35 @@ public class MainActivity extends AppCompatActivity {
         else{
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
+    }
+
+    private void checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(this)
+                        .setTitle("Location Permission Needed")
+                        .setMessage("This app needs the Location permission, please accept to use location functionality")
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                ActivityCompat.requestPermissions(MainActivity.this,
+                                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                        MY_PERMISSIONS_REQUEST_LOCATION);
+                                //buildGoogleApiClient();
+                            }
+                        })
+                        .create()
+                        .show();
+            } else {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+        }
+
     }
 
 }
