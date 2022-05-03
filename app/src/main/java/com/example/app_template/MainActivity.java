@@ -47,6 +47,28 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                    new HomeFragment()).commit();
+        }
+
+        bottomNav.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                                new HomeFragment()).commit();
+                        break;
+                    case R.id.nav_profile:
+                        getSupportFragmentManager().beginTransaction().replace(R.id.main_framelayout,
+                                new ProfileFragment()).commit();
+                        break;
+                }
+                return true;
+            }
+        });
+
     }
 
     private void initComponents(){
