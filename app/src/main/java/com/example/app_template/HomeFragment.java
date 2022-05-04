@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,16 +30,23 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class HomeFragment extends Fragment implements LocationListener {
 
     private View mView;
     private GoogleMap mMap;
-
     private Location mLocation;
 
     private LocationManager mLocationManager;
+    private GeoFire mGeoPersonAvailable;
 
+    private DatabaseReference mDatabase;
+    private FirebaseUser mUser;
 
     public HomeFragment() {
     }
@@ -44,6 +54,10 @@ public class HomeFragment extends Fragment implements LocationListener {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mUser = FirebaseAuth.getInstance().getCurrentUser();
+
         mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         Toast.makeText(getContext(), "On Attach", Toast.LENGTH_SHORT).show();
     }
@@ -89,6 +103,8 @@ public class HomeFragment extends Fragment implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         Toast.makeText(getContext(), "On Location change", Toast.LENGTH_SHORT).show();
         if (location != null) {
+            mLocation = location;
+
             //mMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())).title("Me"));
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
@@ -99,6 +115,8 @@ public class HomeFragment extends Fragment implements LocationListener {
 
             CameraPosition cameraPosition = CameraPosition.builder().target(new LatLng(location.getLatitude(), location.getLongitude())).zoom(15).bearing(0).tilt(45).build();
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            updateLocationCoordinates();
         } else {
             Toast.makeText(getActivity(), "null location", Toast.LENGTH_SHORT).show();
         }
@@ -109,6 +127,26 @@ public class HomeFragment extends Fragment implements LocationListener {
         super.onPause();
         Toast.makeText(getContext(), "On Pause", Toast.LENGTH_SHORT).show();
         mLocationManager.removeUpdates(this);
+    }
+
+    private void updateLocationCoordinates() {
+
+        String mUid = mUser.getUid();
+        Log.i("MUID", mUid);
+        DatabaseReference runnersAvailable = mDatabase.child("personAvailable").child(mUid);
+        mGeoPersonAvailable = new GeoFire(runnersAvailable);
+
+        double lat = mLocation.getLatitude();
+        double lon = mLocation.getLongitude();
+
+
+        mGeoPersonAvailable.setLocation(mUid, new GeoLocation(lat, lon), new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
+
+            }
+        });
+
     }
 
 }

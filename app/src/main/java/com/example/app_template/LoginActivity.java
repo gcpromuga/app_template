@@ -176,6 +176,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
