@@ -9,6 +9,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,8 @@ import androidx.fragment.app.Fragment;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryDataEventListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,9 +35,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class HomeFragment extends Fragment implements LocationListener {
 
@@ -117,6 +122,8 @@ public class HomeFragment extends Fragment implements LocationListener {
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
             updateLocationCoordinates();
+
+            getAvailablePerson();
         } else {
             Toast.makeText(getActivity(), "null location", Toast.LENGTH_SHORT).show();
         }
@@ -133,7 +140,7 @@ public class HomeFragment extends Fragment implements LocationListener {
 
         String mUid = mUser.getUid();
         Log.i("MUID", mUid);
-        DatabaseReference runnersAvailable = mDatabase.child("personAvailable").child(mUid);
+        DatabaseReference runnersAvailable = mDatabase.child("personAvailable");
         mGeoPersonAvailable = new GeoFire(runnersAvailable);
 
         double lat = mLocation.getLatitude();
@@ -147,6 +154,54 @@ public class HomeFragment extends Fragment implements LocationListener {
             }
         });
 
+    }
+
+    private void getAvailablePerson() {
+
+        DatabaseReference personAvailable = mDatabase.child("personAvailable");
+        mGeoPersonAvailable = new GeoFire(personAvailable);
+
+        GeoQuery geoQuery = mGeoPersonAvailable.queryAtLocation(new GeoLocation(mLocation.getLatitude(), mLocation.getLongitude()), 10);
+        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+            @Override
+            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+                if (dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0) {
+                    if(!TextUtils.equals(mUser.getUid().toString(),dataSnapshot.getKey().toString())){
+                        LatLng latLng = new LatLng(location.latitude,location.longitude);
+                        MarkerOptions markerOptions = new MarkerOptions();
+                        markerOptions.position(latLng);
+                        markerOptions.title("Other");
+                        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+                        mMap.addMarker(markerOptions);
+                    }
+                }
+            }
+
+            @Override
+            public void onDataExited(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
     }
 
 }
